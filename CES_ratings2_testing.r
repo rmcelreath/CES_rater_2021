@@ -27,7 +27,7 @@
 # NEED sim_talks() function definition from CES_ratings1_develop.r
 ###################################################################
 
-set.seed(1)
+set.seed(2)
 
 X <- sim_talks( 
     N=61 ,
@@ -36,20 +36,24 @@ X <- sim_talks(
     L=4 ,
     Q=2 ,
     RHO=matrix(c(1,0.5,0.5,1),2,2) ,
-    verbose=FALSE )
+    verbose=FALSE ,
+    flip=c(3) )
 
 dat <- X$dat
+dat$weights <- rep(1,dat$Q)
 
 # count number of times each judge appears
 table(dat$jid)
 
 # run model
-dat$weights <- rep(1,dat$Q)
 m1 <- cstan( file="model1.stan" , data=dat , chains=3 , cores=3 )
 # m0 <- cstan( file="model_null.stan" , data=dat , chains=3 , cores=3 )
+# m1 <- cstan( file="model1f.stan" , data=dat , chains=1 , cores=3 )
 
 precis(m1,3,pars=c("score","RHO_talks"))
 precis(m1,3,pars=c("total_score"))
+
+precis(m1,3,pars=c("pflip"))
 
 post <- extract.samples(m1)
 score <- apply(post$score,2:3,mean)

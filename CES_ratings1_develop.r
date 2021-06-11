@@ -10,7 +10,7 @@
 
 # SIMULATION
 
-sim_talks <- function( N=50 , M=10 , K=4 , L=4 , Q=2 , RHO=NULL , verbose=FALSE ) {
+sim_talks <- function( N=50 , M=10 , K=4 , L=4 , Q=2 , RHO=NULL , verbose=FALSE , flip=c() ) {
 
     require(rethinking)
 
@@ -108,6 +108,11 @@ sim_talks <- function( N=50 , M=10 , K=4 , L=4 , Q=2 , RHO=NULL , verbose=FALSE 
         for ( j in 1:K ) { # talks
             for ( q in 1:Q ) # features
                 ratings_long[r,q] <- rordlogit( 1 , phi=talks[i,q] , a=judges[ judge_by_talk[i,j] , q , ] )
+            # flipped scale?
+            if ( i %in% flip ) {
+                # flip the ratings for this judge
+                ratings_long[r,] <- L + 2 - ratings_long[r,]
+            }
             jid[r] <- judge_by_talk[i,j]
             tid[r] <- i
             r <- r + 1
