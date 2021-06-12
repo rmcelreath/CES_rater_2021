@@ -4,11 +4,7 @@ library(rethinking)
 library(cmdstanr)
 
 # raw anonymized ratings
-dat_raw <- read.csv( "CES_report/raw/data_v2.csv" )
-
-# remove talk 61 (was not uploaded, cannot be rated)
-w61 <- which( dat_raw$talk==61 )
-dat_raw <- dat_raw[ -w61 , ]
+dat_raw <- read.csv( "dat_anon.csv" )
 
 # prep data input
 dat_input <- list(
@@ -153,10 +149,3 @@ lines( 1:7 , c( inv_logit(mu_cuts[1,]) , 1 ) , lwd=0.5 , lty=2 )
 #lines( 1:7 , c( inv_logit(mu_cuts[2,]) , 1 ) , lwd=0.5 , lty=2 , col=2 )
 }
 
-# illustrate posterior rank distribution using top two talks (38 and 21)
-simplehist( rank_post[38,] , xlim=c(1,60) , xlab="rank" , col=2 )
-simplehist( rank_post[21,] , ylim=c(0,3500) , xlim=c(1,60) , xlab="rank" )
-
-dr <- rank_post[38,]-rank_post[21,]
-simplehist( dr , xlab="rank difference" )
-sum(dr<0)/8000
